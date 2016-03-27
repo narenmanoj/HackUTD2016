@@ -263,7 +263,8 @@ class Simulation:
             dest_val = self.parse_destination(dest)
             if type(dest_val) is int:
                 self.memory[dest_val] = src_val
-            self.set_reg(dest_val, src_val) # mov instruction just copies stuff
+            else:
+                self.set_reg(dest_val, src_val) # mov instruction just copies stuff
             print(str(self.rax))
         elif mnemonic == "push":
             'push expects one argument'
@@ -273,10 +274,66 @@ class Simulation:
             'lea'
         elif mnemonic == "add":
             'add'
+            old_str_pos = str_pos
+            while current_instr[str_pos] != ',':
+                str_pos += 1
+            src = current_instr[old_str_pos:str_pos]
+            str_pos += 2
+            old_str_pos = str_pos
+            dest = current_instr[str_pos:]
+            addend1 = self.parse_src(src)
+            # print(src_val)
+            # print(dest)
+            addend2 = self.parse_src(dest)
+            sum = addend1 + addend2
+            destination = self.parse_destination(dest) # dest is the second operand
+            if type(destination) is int: # if it's in memory
+                self.memory[destination] = sum
+            else :
+                self.set_reg(destination, sum)  # mov instruction just copies stuff
+            print(str(self.rax))
         elif mnemonic == "sub":
             'sub'
+            'add'
+            old_str_pos = str_pos
+            while current_instr[str_pos] != ',':
+                str_pos += 1
+            src = current_instr[old_str_pos:str_pos]
+            str_pos += 2
+            old_str_pos = str_pos
+            dest = current_instr[str_pos:]
+            addend1 = self.parse_src(src)
+            # print(src_val)
+            # print(dest)
+            addend2 = self.parse_src(dest)
+            sum = addend1 - addend2
+            destination = self.parse_destination(dest)  # dest is the second operand
+            if type(destination) is int:  # if it's in memory
+                self.memory[destination] = sum
+            else:
+                self.set_reg(destination, sum)  # mov instruction just copies stuff
+            print(str(self.rax))
         elif mnemonic == "imul":
             'mul'
+            'add'
+            old_str_pos = str_pos
+            while current_instr[str_pos] != ',':
+                str_pos += 1
+            src = current_instr[old_str_pos:str_pos]
+            str_pos += 2
+            old_str_pos = str_pos
+            dest = current_instr[str_pos:]
+            addend1 = self.parse_src(src)
+            # print(src_val)
+            # print(dest)
+            addend2 = self.parse_src(dest)
+            sum = addend1 * addend2
+            destination = self.parse_destination(dest)  # dest is the second operand
+            if type(destination) is int:  # if it's in memory
+                self.memory[destination] = sum
+            else:
+                self.set_reg(destination, sum)  # mov instruction just copies stuff
+            print(str(self.rax))
         elif mnemonic == "ret":
             'ret'
         elif mnemonic == "call":
