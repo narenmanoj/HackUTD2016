@@ -180,6 +180,63 @@ class Simulation:
         ans += (s * multiple)
         return ans
 
+    def set_reg(self, src, dest_val):
+        """sets a destination register to a value"""
+        if src.len() == 3:
+            if src == "rsi":
+                self.rsi = dest_val
+            if src == "esi":
+                self.rsi = dest_val & 0x0000FFFF
+            if src == "rdi":
+                self.rdi = dest_val
+            if src == "edi":
+                self.rdi = dest_val & 0x0000FFFF
+            if src == "rax":
+                self.rax = dest_val
+            if src == "eax":
+                self.rax = dest_val & 0x0000FFFF
+            if src == "rbp":
+                self.rbp = dest_val
+            if src == "ebp":
+                self.rbp = dest_val & 0x0000FFFF
+            if src == "rsp":
+                self.rsp = dest_val
+            if src == "esp":
+                self.rsp = dest_val & 0x0000FFFF
+            if src == "rbx":
+                self.rbx = dest_val
+            if src == "ebx":
+                self.rbx = dest_val & 0x0000FFFF
+            if src == "r8":
+                self.r[8] = dest_val
+            if src == "r9":
+                self.r[9] = dest_val
+            if src == "r10":
+                self.r[10] = dest_val
+            if src == "r11":
+                self.r[11] = dest_val
+        if src.len() == 2:
+            if src == "si":
+                self.rsi = dest_val & 0x000000FF
+            if src == "di":
+                self.rdi = dest_val & 0x000000FF
+            if src == "ax":
+                self.rax = dest_val & 0x000000FF
+            if src == "ah":
+                self.rax = (dest_val & 0x0000000F) << 2
+            if src == "al":
+                self.rax = dest_val & 0x0000000F
+            if src == "bp":
+                self.rbp = dest_val & 0x000000FF
+            if src == "sp":
+                self.rsp = dest_val & 0x000000FF
+            if src == "bx":
+                self.rbx = dest_val & 0x000000FF
+            if src == "bh":
+                self.rbx = (dest_val & 0x0000000F) << 2
+            if src == "bl":
+                self.rbx = dest_val & 0x0000000F
+
     def step(self):
         """executes current instruction then advances the position"""
         current_instr = self.programText[self.currentPos]
@@ -191,6 +248,19 @@ class Simulation:
         str_pos += 1  # points to the first character of the first operand
         if mnemonic == "mov":
             'mov expects two arguments'
+            old_str_pos = str_pos
+            while current_instr[str_pos] != ' ':
+                str_pos += 1
+            src = current_instr[old_str_pos:str_pos]
+            str_pos += 1
+            old_str_pos = str_pos
+            dest = current_instr[str_pos:]
+            src_val = self.parse_src(src)
+            dest_val = self.parse_destination(dest)
+            if type(dest_val) is int:
+                self.memory[dest_val] = src_val
+                return
+
         elif mnemonic == "push":
             'push expects one argument'
         elif mnemonic == "pop":
