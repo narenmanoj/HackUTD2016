@@ -15,12 +15,12 @@ class Simulation:
     rsi = 0
     rdi = 0
     rax = 0
-    rbp = 0
-    rsp = 0
+    rbp = 1000
+    rsp = 992
     rbx = 0
     r = list(0 for i in range(1, 12))
 
-    stack = {}
+    stack = {1000: 500}
     memory = {}
 
     def __init__(self, input_text):
@@ -96,13 +96,22 @@ class Simulation:
         # now we have to deal with indirect addressing
         # we have imm, eb, ei, s, and we have to determine these values now
         str_pos = 0
-        print(src)
+        # print(src)
         while src[str_pos] != '(':
             str_pos += 1
-        if str_pos == 0:
-            imm = 0
-        else:
-            imm = int(src[0:str_pos], 0)
+            if(str_pos == len(src)):
+                # we have just an immedaite
+                imm = int(src, 0)
+                if imm in self.memory:
+                    return self.memory[imm]
+                return 0
+            if src[str_pos] == '(':
+                if str_pos == 0:
+                    imm = 0
+                    break
+                else:
+                    imm = int(src[0:str_pos], 0)
+                    break
         str_pos += 1
         old_str_pos = str_pos
         while src[str_pos] != ',':
@@ -265,11 +274,19 @@ class Simulation:
                 self.memory[dest_val] = src_val
             else:
                 self.set_reg(dest_val, src_val) # mov instruction just copies stuff
-            print(str(self.rax))
+            # print(str(self.rax))
         elif mnemonic == "push":
             'push expects one argument'
+            operand = current_instr[str_pos:]
+            self.rsp -= 8
+            oval = self.parse_src(operand)
+            self.memory[self.rsp] = oval
         elif mnemonic == "pop":
             'pop expects one argument'
+            operand = current_instr[str_pos:]
+            self.set_reg(operand, self.memory[self.rsp])
+            self.rsp += 8
+            print(str(self.rax))
         elif mnemonic == "lea":
             'lea'
         elif mnemonic == "add":
@@ -291,7 +308,7 @@ class Simulation:
                 self.memory[destination] = sum
             else :
                 self.set_reg(destination, sum)  # mov instruction just copies stuff
-            print(str(self.rax))
+            # print(str(self.rax))
         elif mnemonic == "sub":
             'sub'
             'add'
@@ -312,7 +329,7 @@ class Simulation:
                 self.memory[destination] = sum
             else:
                 self.set_reg(destination, sum)  # mov instruction just copies stuff
-            print(str(self.rax))
+            # print(str(self.rax))
         elif mnemonic == "imul":
             'mul'
             'add'
@@ -333,7 +350,7 @@ class Simulation:
                 self.memory[destination] = sum
             else:
                 self.set_reg(destination, sum)  # mov instruction just copies stuff
-            print(str(self.rax))
+            # print(str(self.rax))
         elif mnemonic == "ret":
             'ret'
         elif mnemonic == "call":
@@ -361,3 +378,7 @@ class Simulation:
     def get_stack(self):
         """gets stack"""
         return self.stack
+
+    def get_registers(self):
+        """gets every single register value"""
+        return 0
