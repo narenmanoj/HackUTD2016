@@ -136,6 +136,49 @@ class Simulation:
         else:
             return 0
 
+    def parse_destination(self, dest):
+        if dest.len() == 3:
+            return dest
+        if dest.len() == 2:
+            return dest
+        str_pos = 0
+        while dest[str_pos] != '(':
+            str_pos += 1
+        if str_pos == 0:
+            imm = 0
+        else:
+            imm = int(dest[0:str_pos])
+        str_pos += 1
+        old_str_pos = str_pos
+        while dest[str_pos] != ',':
+            str_pos += 1
+        if old_str_pos == str_pos:
+            eb = 0
+        else:
+            eb = (dest[old_str_pos:str_pos])
+        str_pos += 1
+        old_str_pos = str_pos
+        while dest[str_pos] != ',':
+            str_pos += 1
+        if old_str_pos == str_pos:
+            ei = 0
+        else:
+            ei = (dest[old_str_pos:str_pos])
+        str_pos += 1
+        old_str_pos = str_pos
+        while str[str_pos] != ')':
+            str_pos += 1
+        if old_str_pos == str_pos:
+            s = 0
+        else:
+            s = int(dest[old_str_pos:str_pos])
+        ans = imm
+        ans += self.parse_src(eb)
+        multiple = self.parse_src(ei)
+        if s == 0:
+            s = 1
+        ans += (s * multiple)
+        return ans
 
     def step(self):
         """executes current instruction then advances the position"""
@@ -147,61 +190,7 @@ class Simulation:
         mnemonic = current_instr[0:str_pos]
         str_pos += 1  # points to the first character of the first operand
         if mnemonic == "mov":
-            'parse a move instruction'
-            if current_instr[str_pos] == '$':
-                'immediate, parse rest of number'
-                old_str_pos = str_pos + 1
-                while current_instr[str_pos] != ' ':
-                    str_pos += 1
-                imm = int(current_instr[old_str_pos:str_pos])
-                str_pos += 1
-                # now our str pointer is at the beginning of the second operand
-                second = current_instr[str_pos:]
-                if second == "rax":
-                    self.rax = imm
-                if second == "rsi":
-                    self.rsi = imm
-                if second == "rdi":
-                    self.rdi = imm
-                if second == "rbp":
-                    self.rbp = imm
-                if second == "rsp":
-                    self.rsp = imm
-                if second == "rbx":
-                    self.rbx = imm
-                if second == "r8":
-                    self.r[8] = imm
-                if second == "r9":
-                    self.r[9] = imm
-                if second == "r10":
-                    self.r[10] = imm
-                if second == "r11":
-                    self.r[11] = imm
-            elif current_instr[str_pos] == 'r':
-                # register
-                old_str_pos = str_pos
-                str_pos += 3
-                reg_name = current_instr[old_str_pos:str_pos]
-                if reg_name == "rax":
-                    self.rax = imm
-                if reg_name == "rsi":
-                    self.rsi = imm
-                if reg_name == "rdi":
-                    self.rdi = imm
-                if reg_name == "rbp":
-                    self.rbp = imm
-                if reg_name == "rsp":
-                    self.rsp = imm
-                if reg_name == "rbx":
-                    self.rbx = imm
-                if reg_name == "r8":
-                    self.r[8] = imm
-                if reg_name == "r9":
-                    self.r[9] = imm
-                if reg_name == "r10":
-                    self.r[10] = imm
-                if reg_name == "r11":
-                    self.r[11] = imm
+            'mov expects two arguments'
         elif mnemonic == "push":
             'push expects one argument'
         elif mnemonic == "pop":
