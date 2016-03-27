@@ -79,7 +79,7 @@ class Simulation:
             if src == "ax":
                 return self.rax & 0x000000FF
             if src == "ah":
-                return (self.rax >> 2) & 0x0000000F
+                return (self.rax >> 1) & 0x0000000F
             if src == "al":
                 return self.rax & 0x0000000F
             if src == "bp":
@@ -89,7 +89,7 @@ class Simulation:
             if src == "bx":
                 return self.rbx & 0x000000FF
             if src == "bh":
-                return (self.rbx >> 2) & 0x0000000F
+                return (self.rbx >> 1) & 0x0000000F
             if src == "bl":
                 return self.rbx & 0x0000000F
         # now we have to deal with indirect addressing
@@ -223,7 +223,7 @@ class Simulation:
             if src == "ax":
                 self.rax = dest_val & 0x000000FF
             if src == "ah":
-                self.rax = (dest_val & 0x0000000F) << 2
+                self.rax = (dest_val & 0x0000000F) << 1
             if src == "al":
                 self.rax = dest_val & 0x0000000F
             if src == "bp":
@@ -233,7 +233,7 @@ class Simulation:
             if src == "bx":
                 self.rbx = dest_val & 0x000000FF
             if src == "bh":
-                self.rbx = (dest_val & 0x0000000F) << 2
+                self.rbx = (dest_val & 0x0000000F) << 1
             if src == "bl":
                 self.rbx = dest_val & 0x0000000F
 
@@ -260,7 +260,7 @@ class Simulation:
             if type(dest_val) is int:
                 self.memory[dest_val] = src_val
                 return
-
+            self.set_reg(dest_val, src_val) # mov instruction just copies stuff
         elif mnemonic == "push":
             'push expects one argument'
         elif mnemonic == "pop":
