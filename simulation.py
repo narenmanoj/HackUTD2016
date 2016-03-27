@@ -36,71 +36,73 @@ class Simulation:
     def parse_src(self, src):
         """parses a source operand and returns the appropriate value"""
         # first deal with immediate values
+        # eval(src)
         if src[0] == '$':
-            return int(src[1:])
-        if src.len() == 3:
-            if src == "rsi":
+            return int(src[1:], 0)
+        if len(src) == 4:
+            if src == "%rsi":
                 return self.rsi
-            if src == "esi":
+            if src == "%esi":
                 return self.rsi & 0x0000FFFF
-            if src == "rdi":
+            if src == "%rdi":
                 return self.rdi
-            if src == "edi":
+            if src == "%edi":
                 return self.rdi & 0x0000FFFF
-            if src == "rax":
+            if src == "%rax":
                 return self.rax
-            if src == "eax":
+            if src == "%eax":
                 return self.rax & 0x0000FFFF
-            if src == "rbp":
+            if src == "%rbp":
                 return self.rbp
-            if src == "ebp":
+            if src == "%ebp":
                 return self.rbp & 0x0000FFFF
-            if src == "rsp":
+            if src == "%rsp":
                 return self.rsp
-            if src == "esp":
+            if src == "%esp":
                 return self.rsp & 0x0000FFFF
-            if src == "rbx":
+            if src == "%rbx":
                 return self.rbx
-            if src == "ebx":
+            if src == "%ebx":
                 return self.rbx & 0x0000FFFF
-            if src == "r8":
+            if src == "%r8":
                 return self.r[8]
-            if src == "r9":
+            if src == "%r9":
                 return self.r[9]
-            if src == "r10":
+            if src == "%r10":
                 return self.r[10]
-            if src == "r11":
+            if src == "%r11":
                 return self.r[11]
-        if src.len() == 2:
-            if src == "si":
+        if len(src) == 3:
+            if src == "%si":
                 return self.rsi & 0x000000FF
-            if src == "di":
+            if src == "%di":
                 return self.rdi & 0x000000FF
-            if src == "ax":
+            if src == "%ax":
                 return self.rax & 0x000000FF
-            if src == "ah":
+            if src == "%ah":
                 return (self.rax >> 1) & 0x0000000F
-            if src == "al":
+            if src == "%al":
                 return self.rax & 0x0000000F
-            if src == "bp":
+            if src == "%bp":
                 return self.rbp & 0x000000FF
-            if src == "sp":
+            if src == "%sp":
                 return self.rsp & 0x000000FF
-            if src == "bx":
+            if src == "%bx":
                 return self.rbx & 0x000000FF
-            if src == "bh":
+            if src == "%bh":
                 return (self.rbx >> 1) & 0x0000000F
-            if src == "bl":
+            if src == "%bl":
                 return self.rbx & 0x0000000F
         # now we have to deal with indirect addressing
         # we have imm, eb, ei, s, and we have to determine these values now
         str_pos = 0
+        print(src)
         while src[str_pos] != '(':
             str_pos += 1
         if str_pos == 0:
             imm = 0
         else:
-            imm = int(src[0:str_pos])
+            imm = int(src[0:str_pos], 0)
         str_pos += 1
         old_str_pos = str_pos
         while src[str_pos] != ',':
@@ -124,7 +126,7 @@ class Simulation:
         if old_str_pos == str_pos:
             s = 0
         else:
-            s = int(src[old_str_pos:str_pos])
+            s = int(src[old_str_pos:str_pos], 0)
         ans = imm
         ans += self.parse_src(eb)
         multiple = self.parse_src(ei)
@@ -137,9 +139,9 @@ class Simulation:
             return 0
 
     def parse_destination(self, dest):
-        if dest.len() == 3:
+        if len(dest) == 4:
             return dest
-        if dest.len() == 2:
+        if len(dest) == 3:
             return dest
         str_pos = 0
         while dest[str_pos] != '(':
@@ -147,7 +149,7 @@ class Simulation:
         if str_pos == 0:
             imm = 0
         else:
-            imm = int(dest[0:str_pos])
+            imm = int(dest[0:str_pos], 0)
         str_pos += 1
         old_str_pos = str_pos
         while dest[str_pos] != ',':
@@ -171,7 +173,7 @@ class Simulation:
         if old_str_pos == str_pos:
             s = 0
         else:
-            s = int(dest[old_str_pos:str_pos])
+            s = int(dest[old_str_pos:str_pos], 0)
         ans = imm
         ans += self.parse_src(eb)
         multiple = self.parse_src(ei)
@@ -182,59 +184,59 @@ class Simulation:
 
     def set_reg(self, src, dest_val):
         """sets a destination register to a value"""
-        if src.len() == 3:
-            if src == "rsi":
+        if len(src) == 4:
+            if src == "%rsi":
                 self.rsi = dest_val
-            if src == "esi":
+            if src == "%esi":
                 self.rsi = dest_val & 0x0000FFFF
-            if src == "rdi":
+            if src == "%rdi":
                 self.rdi = dest_val
-            if src == "edi":
+            if src == "%edi":
                 self.rdi = dest_val & 0x0000FFFF
-            if src == "rax":
+            if src == "%rax":
                 self.rax = dest_val
-            if src == "eax":
+            if src == "%eax":
                 self.rax = dest_val & 0x0000FFFF
-            if src == "rbp":
+            if src == "%rbp":
                 self.rbp = dest_val
-            if src == "ebp":
+            if src == "%ebp":
                 self.rbp = dest_val & 0x0000FFFF
-            if src == "rsp":
+            if src == "%rsp":
                 self.rsp = dest_val
-            if src == "esp":
+            if src == "%esp":
                 self.rsp = dest_val & 0x0000FFFF
-            if src == "rbx":
+            if src == "%rbx":
                 self.rbx = dest_val
-            if src == "ebx":
+            if src == "%ebx":
                 self.rbx = dest_val & 0x0000FFFF
-            if src == "r8":
+            if src == "%r8":
                 self.r[8] = dest_val
-            if src == "r9":
+            if src == "%r9":
                 self.r[9] = dest_val
-            if src == "r10":
+            if src == "%r10":
                 self.r[10] = dest_val
-            if src == "r11":
+            if src == "%r11":
                 self.r[11] = dest_val
-        if src.len() == 2:
-            if src == "si":
+        if len(src) == 3:
+            if src == "%si":
                 self.rsi = dest_val & 0x000000FF
-            if src == "di":
+            if src == "%di":
                 self.rdi = dest_val & 0x000000FF
-            if src == "ax":
+            if src == "%ax":
                 self.rax = dest_val & 0x000000FF
-            if src == "ah":
+            if src == "%ah":
                 self.rax = (dest_val & 0x0000000F) << 1
-            if src == "al":
+            if src == "%al":
                 self.rax = dest_val & 0x0000000F
-            if src == "bp":
+            if src == "%bp":
                 self.rbp = dest_val & 0x000000FF
-            if src == "sp":
+            if src == "%sp":
                 self.rsp = dest_val & 0x000000FF
-            if src == "bx":
+            if src == "%bx":
                 self.rbx = dest_val & 0x000000FF
-            if src == "bh":
+            if src == "%bh":
                 self.rbx = (dest_val & 0x0000000F) << 1
-            if src == "bl":
+            if src == "%bl":
                 self.rbx = dest_val & 0x0000000F
 
     def step(self):
@@ -249,18 +251,20 @@ class Simulation:
         if mnemonic == "mov":
             'mov expects two arguments'
             old_str_pos = str_pos
-            while current_instr[str_pos] != ' ':
+            while current_instr[str_pos] != ',':
                 str_pos += 1
             src = current_instr[old_str_pos:str_pos]
-            str_pos += 1
+            str_pos += 2
             old_str_pos = str_pos
             dest = current_instr[str_pos:]
             src_val = self.parse_src(src)
+            # print(src_val)
+            # print(dest)
             dest_val = self.parse_destination(dest)
             if type(dest_val) is int:
                 self.memory[dest_val] = src_val
-                return
             self.set_reg(dest_val, src_val) # mov instruction just copies stuff
+            print(str(self.rax))
         elif mnemonic == "push":
             'push expects one argument'
         elif mnemonic == "pop":
